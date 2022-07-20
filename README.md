@@ -14,6 +14,6 @@ Then in browser use the following format in url:
 
 Notes:
 
-file extention .jpg only allowed
-width & height must be integers only
-available images names are ==> tiger.jpg - cat.jpg - landscape.jpg
+File extention .jpg only allowed.
+Width & height must be integers only.
+Available images names are ==> tiger.jpg - cat.jpg - landscape.jpg
