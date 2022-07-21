@@ -1,25 +1,30 @@
 import express from "express";
 import path from "path";
-import sharp from "sharp";
 import fs from "fs";
+import resizeImage from "../services/resizeImage";
+import renameImage from "../services/renameImage";
 
-const serveImg = async (req: express.Request, res: express.Response) => {
+const serveImg = async (
+  req: express.Request,
+  res: express.Response
+): Promise<void> => {
   try {
     const { filename, width, height } = req.query;
     const imgWidth = parseInt(width as string);
     const imgHeight = parseInt(height as string);
 
-    const resizedFilename = `${(filename as string).slice(
-      0,
-      -4
-    )}_${imgWidth}_${imgHeight}.jpg`;
-
-    const resizedPath = path.join(
+    const originalPath = path.join(
       __dirname,
       "..",
       "..",
-      "resized_images",
-      `${resizedFilename}`
+      "original_images",
+      `${filename}`
+    );
+
+    const resizedFilename = renameImage(
+      filename as string,
+      imgWidth,
+      imgHeight
     );
 
     //create the resized_images directory if not already existed
@@ -29,17 +34,21 @@ const serveImg = async (req: express.Request, res: express.Response) => {
       });
     }
 
+    const resizedPath = path.join(
+      __dirname,
+      "..",
+      "..",
+      "resized_images",
+      `${resizedFilename}`
+    );
+
     //ckeck if requested Image already in resized image folder return it without new resizing
     if (fs.existsSync(resizedPath)) {
       return res.sendFile(resizedPath);
     }
 
     //resize requested image if it didn't resized before
-    await sharp(
-      path.join(__dirname, "..", "..", "original_images", `${filename}`)
-    )
-      .resize(imgWidth, imgHeight)
-      .toFile(resizedPath);
+    await resizeImage(originalPath, resizedPath, imgWidth, imgHeight);
 
     res.sendFile(resizedPath);
   } catch (err) {

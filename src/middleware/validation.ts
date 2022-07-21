@@ -6,7 +6,7 @@ const validateURL = (
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
-) => {
+): void | express.Response => {
   const inValidMsg = path.join(__dirname, "..", "..", "pages", "homePage.html");
 
   const { filename, width, height } = req.query;

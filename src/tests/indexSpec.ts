@@ -1,7 +1,7 @@
 import supertest from "supertest";
 import app from "..";
 import path from "path";
-import sharp from "sharp";
+import resizeImage from "../services/resizeImage";
 
 const request = supertest(app);
 describe("Test /image endpoint responses", () => {
@@ -42,9 +42,12 @@ describe("Test image resize function", () => {
     `cat_${imgWidth}_${imgHeight}.jpg`
   );
   it("should resize image width & height to be 200px", async () => {
-    const response = await sharp(imgPath)
-      .resize(imgWidth, imgHeight)
-      .toFile(outputPath);
+    const response = await resizeImage(
+      imgPath,
+      outputPath,
+      imgWidth,
+      imgHeight
+    );
     expect(response.width).toBe(200);
     expect(response.height).toBe(200);
   });
